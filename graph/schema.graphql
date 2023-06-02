@@ -1,0 +1,27 @@
+type TodoElastic {
+  id: ID!
+  title: String!
+  completed: Boolean!
+}
+
+type Query {
+  getTodoElastic(id: ID!): TodoElastic!
+  getTodosElastic(page: Int, limit: Int): [TodoElastic]
+  searchTodosElastic(query: String!, page: Int, limit: Int): [TodoElastic]
+}
+
+type Mutation {
+  createTodoElastic(input: TodoInput!): String!
+  updateTodoElastic(input: TodoInputId!): String!
+  deleteTodoElastic(id: ID!): Boolean!
+}
+
+input TodoInput {
+  title: String!
+  completed: Boolean
+}
+input TodoInputId {
+  id: ID!
+  title: String
+  completed: Boolean
+}

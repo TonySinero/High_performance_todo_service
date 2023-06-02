@@ -1,0 +1,9 @@
+.idea
+.vscode
+.env
+./database/dbdata
+./database/cass
+./database/click
+./database/red
+./database/maria
+./database/node1

@@ -1,0 +1,96 @@
+run:
+  tests: true
+  build-tags:
+    - bench
+    - !bench
+
+linters-settings:
+  funlen:
+    lines: 150
+    statements: 80
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - dupl
+        - gocyclo
+        - gosec
+
+linters:
+  linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - gofumpt
+    - goheader
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - stylecheck
+    - tagliatelle
+    - thelper
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - whitespace
+  exclude-use-default:
+    - cmd/**/*
+    - vendor/**/*
+    - generated.go
+  deadlines:
+    warn: 500ms
+    error: 1s
+  stylecheck:
+    package-naming-scheme: "kebab-case"
+    struct-tag-style: "camelcase"
+  unused:
+    check-exported: true
+  goconst:
+    min-occurrences: 3
+    min-length: 3
+  govet:
+    enable: ["deadcode", "structtag"]
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+    check-shadowing: true
+  gosec:
+    min-confidence: 0.9
+    enable: ["G204"]
+  gofmt:
+    simplify: true

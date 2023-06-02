@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  todo-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todo-service
+    command: ./todo-service
+    env_file:
+    - .env
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis-container
+      - mongo-container
+      - cassandra-container
+      - mariadb-container
+      - clickhouse-container
+      - prometheus-container
+      - grafana-container
+    networks:
+      - backend
+
+  redis-container:
+    container_name: redis-container
+    restart: always
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - /database/red:/data
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+  mongo-container:
+    container_name: mongo-container
+    restart: always
+    image: mongo:latest
+    ports:
+      - 27019:27017
+    volumes:
+      - ./mongo_init.js:/docker-entrypoint-initdb.d/mongo_init.js
+      - /database/dbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+
+  cassandra-container:
+    container_name: cassandra-container
+    restart: always
+    image: cassandra:latest
+    ports:
+      - 9042:9042
+    volumes:
+      - /database/cass:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=${CASSANDRA_CLUSTER_NAME}
+      - CASSANDRA_LISTEN_ADDRESS=${CASSANDRA_LISTEN_ADDRESS}
+      - CASSANDRA_KEYSPACE=${CASSANDRA_KEYSPACE}
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
+
+  mariadb-container:
+    container_name: mariadb-container
+    restart: always
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - /database/maria:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+
+
+  clickhouse-container:
+    container_name: clickhouse-container
+    restart: always
+    image: yandex/clickhouse-server
+    ports:
+      - 9000:9000
+      - 8123:8123
+    volumes:
+      - /database/click:/var/lib/clickhouse
+    environment:
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+
+  prometheus-container:
+    container_name: prometheus-container
+    restart: always
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./data/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana-container:
+    container_name: grafana-container
+    restart: always
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+
+
+networks:
+  backend:
